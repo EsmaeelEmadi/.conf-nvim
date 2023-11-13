@@ -15,8 +15,7 @@ end, { remap = true, desc = "[H]op [B]ackward" })
 local wk = require("which-key")
 
 wk.register({
-  ["<leader>h"] = {name = "Hop"},
-  ["<leader>hf"] = {"[H]op [F]orward"},
-  ["<leader>hb"] = {"[H]op [B]ackward"}
+  ["<leader>h"] = { name = "Hop" },
+  ["<leader>hf"] = { "[H]op [F]orward" },
+  ["<leader>hb"] = { "[H]op [B]ackward" }
 })
-

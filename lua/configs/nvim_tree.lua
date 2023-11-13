@@ -16,5 +16,5 @@ vim.keymap.set('n', '<leader>f', ':NvimTreeToggle <CR>')
 local wk = require("which-key")
 
 wk.register({
-  ["<leader>f"] = {"File Tree"},
+    ["<leader>f"] = { "File Tree" },
 })
