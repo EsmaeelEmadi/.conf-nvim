@@ -2,40 +2,53 @@ require "before"
 require "packages"
 require "after"
 
-        local capabilities = require('cmp_nvim_lsp').default_capabilities()
-        local api = require('typescript-tools.api')
-        local noremap = { noremap = true, silent = true }
-        local wk = require('which-key');
+-- TODO: its is the same as the code in
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+  update_in_insert = true,
+  underline = true,
+  severity_sort = false,
+  float = {
+    border = 'rounded',
+    source = 'always',
+    header = '',
+    prefix = ''
+  }
+})
 
-        wk.register({
-            -- FILE
-            ['<leader>'] = {
-                c = {
-                    name = "[C]ode",
-                    m = { ':TSToolsAddMissingImports<CR>', noremap, "add [M]issing imports" },
-                    r = { ':TSToolsRemoveUnused<CR>',  noremap, "[R]emove unused variables" } ,
-                    x = { ':TSToolsRemoveUnusedImports<CR>',noremap, "[R]emove unused [I]mports"  },
-                    d = { ':TSToolsGoToSourceDefinition<CR>', noremap, "go to [D]efinition"  },
-                    o = { ':TSToolsOrganizeImports<CR>',  noremap,"[O]rganize imports"  },
-                    s = { ':TSToolsSortImports<CR>',  noremap,"[S]ort imports"  },
-                    f = { ':TSToolsFixAll<CR>', noremap, "[F]ix all"  },
-                }
-            }
-        })
-        require('typescript-tools').setup({
-            capabilities = capabilities,
-            settings = {
-                separate_diagnostic_server = true,
-                publish_diagnostic_on = 'insert_leave',
-                expose_as_code_action = { 'fix_all', 'add_missing_imports', 'remove_unused' },
-                tsserver_max_memory = 'auto',
-            },
-            handlers = {
-                ['textDocument/publishDiagnostics'] = api.filter_diagnostics(
-                -- Ignore 'This may be converted to an async function' diagnostics.
-                    { 80001 }
-                ),
-            },
-        })
+-- -- Show line diagnostics automatically in hover window
+--
+-- Set completeopt to have a better completion experience
+-- :help completeopt
+-- menuone: popup even when there's only one match
+-- noinsert: Do not insert text until a selection is made
+-- noselect: Do not select, force to select one from the menu
+-- shortness: avoid showing extra messages when using completion
+-- updatetime: set updatetime for CursorHold
+vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
+vim.opt.shortmess = vim.opt.shortmess + {
+  c = true
+}
+vim.api.nvim_set_option('updatetime', 300)
+
+-- Fixed column for diagnostics to appear
+-- Show autodiagnostic popup on cursor hover_range
+-- Goto previous / next diagnostic warning / error
+-- Show inlay_hints more frequently
+vim.cmd([[
+set signcolumn=yes
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
+
+vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
 
 
+
+local status, nvim_lsp = pcall(require, "lspconfig")
+
+-- TypeScript
+nvim_lsp.tsserver.setup {
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+  cmd = { "typescript-language-server", "--stdio" }
+}

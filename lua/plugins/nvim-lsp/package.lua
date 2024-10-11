@@ -3,7 +3,7 @@ local noremap = { noremap = true, silent = true }
 
 vim.diagnostic.config({
   underline = true,
-  virtual_text = false,
+  virtual_text = true,
   update_in_insert = true,
 })
 
