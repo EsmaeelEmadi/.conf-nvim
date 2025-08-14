@@ -9,7 +9,7 @@ return {
     end,
   keys = {
     {
-      '<Tab>',
+      '<C-f>',
       mode = { 'n', 'x', 'o' },
       function()
         require('flash').jump()

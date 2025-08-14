@@ -19,3 +19,7 @@ wk.add {
     mode = 'n',
   },
 }
+
+vim.keymap.set('n', '<C-\\>', function()
+  vim.cmd('tab stj ' .. vim.fn.expand '<cword>')
+end, { noremap = true, silent = true, desc = 'Open tag in new tab' })

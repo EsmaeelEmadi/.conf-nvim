@@ -26,6 +26,7 @@ require('lazy').setup {
   require 'plugins.mini',
   require 'plugins.whichkey',
   require 'plugins.blink',
+  require 'plugins.trouble',
   -- require 'plugins.bars',
   { 'nvim-tree/nvim-web-devicons', opts = {} },
   {
