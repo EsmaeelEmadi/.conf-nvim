@@ -16,6 +16,8 @@ return {
     'saghen/blink.cmp',
   },
   config = function()
+    local lspconfig = require 'lspconfig'
+    local util = require 'lspconfig.util'
     -- Brief aside: **What is LSP?**
     --
     -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -204,8 +206,18 @@ return {
       --    https://github.com/pmizio/typescript-tools.nvim
       --
       -- But for many setups, the LSP (`ts_ls`) will work just fine
-      ts_ls = {},
-      --
+      ts_ls = {
+        root_dir = function(fname)
+          -- Disable tsserver if we're in a Deno project
+          if util.root_pattern('deno.json', 'deno.jsonc')(fname) then
+            return nil
+          end
+          return util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json')(fname)
+        end,
+      },
+      denols = {
+        root_dir = util.root_pattern('deno.json', 'deno.jsonc'),
+      },
 
       lua_ls = {
         -- cmd = { ... },
@@ -251,13 +263,36 @@ return {
       handlers = {
         function(server_name)
           local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for ts_ls)
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
+
+          -- Deno vs Node guard
+          if server_name == 'ts_ls' then
+            local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
+            if is_deno then
+              -- Don’t start tsserver if we’re in a Deno project
+              return
+            end
+          elseif server_name == 'denols' then
+            local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
+            if not is_deno then
+              -- Don’t start denols if we’re NOT in a Deno project
+              return
+            end
+          end
+
+          lspconfig[server_name].setup(server)
         end,
       },
+      -- handlers = {
+      --   function(server_name)
+      --     local server = servers[server_name] or {}
+      --     -- This handles overriding only values explicitly passed
+      --     -- by the server configuration above. Useful when disabling
+      --     -- certain features of an LSP (for example, turning off formatting for ts_ls)
+      --     server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      --     require('lspconfig')[server_name].setup(server)
+      --   end,
+      -- },
     }
   end,
 }
