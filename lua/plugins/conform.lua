@@ -4,7 +4,7 @@ return { -- Autoformat
   cmd = { 'ConformInfo' },
   keys = {
     {
-      '<leader>f',
+      'fo',
       function()
         require('conform').format { async = true, lsp_format = 'fallback' }
       end,
@@ -29,13 +29,13 @@ return { -- Autoformat
       end
     end,
     formatters_by_ft = {
-      lua = { "stylua" },
-      javascript = { "biome", "biome-organize-imports" },
-      javascriptreact = { "biome", "biome-organize-imports" },
-      typescript = { "biome", "biome-organize-imports" },
-      typescriptreact = { "biome", "biome-organize-imports" },
-      go = { "goimports", "gofmt" },
-      rust = { "rustfmt" },
+      lua = { 'stylua' },
+      javascript = { 'biome', 'biome-organize-imports' },
+      javascriptreact = { 'biome', 'biome-organize-imports' },
+      typescript = { 'biome', 'biome-organize-imports' },
+      typescriptreact = { 'biome', 'biome-organize-imports' },
+      go = { 'goimports', 'gofmt' },
+      rust = { 'rustfmt' },
     },
   },
 }

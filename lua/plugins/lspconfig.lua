@@ -215,9 +215,9 @@ return {
           return util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json')(fname)
         end,
       },
-      denols = {
-        root_dir = util.root_pattern('deno.json', 'deno.jsonc'),
-      },
+      -- denols = {
+      --   root_dir = util.root_pattern('deno.json', 'deno.jsonc'),
+      -- },
 
       lua_ls = {
         -- cmd = { ... },
@@ -265,22 +265,22 @@ return {
           local server = servers[server_name] or {}
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
 
-          -- Deno vs Node guard
-          if server_name == 'ts_ls' then
-            local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
-            if is_deno then
-              -- Don’t start tsserver if we’re in a Deno project
-              return
-            end
-          elseif server_name == 'denols' then
-            local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
-            if not is_deno then
-              -- Don’t start denols if we’re NOT in a Deno project
-              return
-            end
-          end
+          -- -- Deno vs Node guard
+          -- if server_name == 'ts_ls' then
+          --   local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
+          --   if is_deno then
+          --     -- Don’t start tsserver if we’re in a Deno project
+          --     return
+          --   end
+          -- elseif server_name == 'denols' then
+          --   local is_deno = util.root_pattern('deno.json', 'deno.jsonc')(vim.loop.cwd())
+          --   if not is_deno then
+          --     -- Don’t start denols if we’re NOT in a Deno project
+          --     return
+          --   end
+          -- end
 
-          lspconfig[server_name].setup(server)
+          lspconfig['ts-ls'].setup(server)
         end,
       },
       -- handlers = {
